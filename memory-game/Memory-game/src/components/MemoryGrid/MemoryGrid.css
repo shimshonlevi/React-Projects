@@ -1,0 +1,20 @@
+.memory-grid {
+    text-align: center;
+  }
+  
+  .memory-game {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .scoreboard {
+    margin: 15px 0;
+  }
+  
+  button, select {
+    margin: 10px;
+  }
+  
