@@ -1,42 +1,27 @@
-import mongoose,{Schema,Types,Document ,ObjectId} from "mongoose";
+import mongoose, { Schema, Types, Document } from "mongoose";
+import { IResource } from "../types/types";
+import missileModel from "./missileModel";
 
-export type objectID = ObjectId;
-
-export interface IOrgonization extends Document {
-    name:string,
-    resources:[{
-        name:string,
-        amount:number
-    }],
-    budget:number
+export interface Organization extends Document {
+    _id: Types.ObjectId;
+    name: string;
+    resources: IResource[];
+    budget: number;
 }
 
-export interface AuthenticatedRequest extends Document{
-    IOrgonization?:IOrgonization
-}
-
-const orgonizationSchema = new mongoose.Schema({
+const organizationSchema = new Schema<Organization>({
     name: {
         type: String,
-        required: true
     },
     resources: {
-        type: [{
-            name: {
-                type: String,
-                required: true
-            },
-            amount: {
-                type: Number,
-                required: true
-            }
-        }],
-        required: true
+        type: [Object],
+        default: []
     },
     budget: {
         type: Number,
-        required: true
-    }
-})
+    },
+});
 
-export default mongoose.model<IOrgonization>('Orgonization',orgonizationSchema)
+const organizationModel = mongoose.model("Organization", organizationSchema);
+
+export default organizationModel;
