@@ -1,0 +1,22 @@
+[
+    {
+        "name": "John Doe",
+        "image": "https://example.com/images/john_doe.jpg",
+        "votes": 0
+    },
+    {
+        "name": "Jane Smith",
+        "image": "https://example.com/images/jane_smith.jpg",
+        "votes": 0
+    },
+    {
+        "name": "Alice Johnson",
+        "image": "https://example.com/images/alice_johnson.jpg",
+        "votes": 0
+    },
+    {
+        "name": "Bob Brown",
+        "image": "https://example.com/images/bob_brown.jpg",
+        "votes": 0
+    }
+]

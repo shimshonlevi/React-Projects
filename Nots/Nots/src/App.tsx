@@ -16,7 +16,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/new/notes" element={<NewNote />} />
           <Route path="/notes" element={<NotsList />} />
-          <Route path="/notes/:id" element={<NotsItem />} />
           <Route path="/edit/:id" element={<EditNote />} />
         </Routes>
       </BrowserRouter>

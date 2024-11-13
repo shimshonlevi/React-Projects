@@ -1,0 +1,42 @@
+.note-card{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 300px;
+    background-color: rgb(213, 174, 222);
+    border-radius: 10px;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
+}
+.note-card .note-card-info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.note-card .note-card-info h1{
+    font-size: 20px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.note-card .note-card-info h2{
+    font-size: 16px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.note-card .note-card-info h3{
+    font-size: 14px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.note-card .note-card-info p{
+    font-size: 12px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.note-card button{
+    margin: 10px 0;
+}

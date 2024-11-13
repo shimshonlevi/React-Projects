@@ -1,0 +1,98 @@
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { objectID } from "../../../../../bakend/src/models/userModel";
+import axios from "axios";
+
+export interface ICandidate {
+    _id?: objectID;
+    name: string;
+    image: string;
+    votes: number;
+}
+
+interface CandidateStateType {
+    candidates: ICandidate[];
+    error: boolean;
+    errorMessage: string | null;
+    isLoading: boolean;
+}
+
+const initialState: CandidateStateType = {
+    candidates: [],
+    error: false,
+    errorMessage: null,
+    isLoading: false
+};
+
+const BASE_URL: string = "http://localhost:3001";
+
+export const fetchCandidates = createAsyncThunk("candidates/fetchCandidates", async () => {
+    const token = JSON.parse(localStorage.getItem("myUserToken")!);
+    if(!token)
+        throw new Error("you don't have any token");
+
+    const response = await axios.get(`${BASE_URL}/candidates`, {headers: {Authorization: `Bearer ${token}`}});
+    console.log(response.data);
+    return response.data.candidates;
+});
+
+export const updateVote = createAsyncThunk("candidates/updateVote", async (data: {id: objectID, candidateId: objectID}) => {
+    const token = JSON.parse(localStorage.getItem("myUserToken")!);
+    const response = await axios.put(`${BASE_URL}/users/${data.id}`, {votedFor: data.candidateId}, {headers: {Authorization: `Bearer ${token}`},});
+    console.log(response.data);
+    return response.data;
+});
+
+const candidatesSlice = createSlice({
+    name: "candidates",
+    initialState,
+    reducers: {
+        setCandidates: (state, action) => {
+            state.candidates = action.payload;
+        },
+        removeVoteFromCandidate: (state, action: PayloadAction<objectID>) => {
+            let index = state.candidates.findIndex((c: ICandidate) => c._id == action.payload);
+            if(state.candidates[index].votes != 0)
+                state.candidates[index].votes -= 1; 
+        }
+    },
+    extraReducers(builder) {
+        builder
+        .addCase(fetchCandidates.pending, (state) => {
+            state.error = false;
+            state.errorMessage = null;
+            state.isLoading = true;
+        })
+        .addCase(fetchCandidates.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = true;
+            console.log(action.error);
+            state.errorMessage = action.error.message!;
+        })
+        .addCase(fetchCandidates.fulfilled, (state, action) => {
+            state.error = false;
+            state.errorMessage = null;
+            state.isLoading = false;
+            state.candidates = action.payload;
+        })
+        .addCase(updateVote.pending, (state) => {
+            state.isLoading = true;
+            state.error = false;
+            state.errorMessage = null;
+        })
+        .addCase(updateVote.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = true;
+            state.errorMessage = action.payload as string;
+        })
+        .addCase(updateVote.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.error = false;
+            state.errorMessage = null;
+            (state.candidates as ICandidate[]) = action.payload.candidates;
+        })
+    },
+});
+
+export const {setCandidates, removeVoteFromCandidate} = candidatesSlice.actions;
+
+export default candidatesSlice.reducer;

@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 
-function useForm<T>(initialState: T, editData?: T) {
+// הגדרת ה-hook useForm
+function useForm<T>(
+    initialState: T, 
+    validate: (values: T) => { [key: string]: string }, 
+    editData?: T
+) {
     const [state, setState] = useState<T>(initialState);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -10,9 +15,9 @@ function useForm<T>(initialState: T, editData?: T) {
         }
     }, [editData]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setState(prevState => ({ ...prevState, [name]: value }));
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = event.target;
+        setState((prevState) => ({ ...prevState, [name]: value }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -23,4 +28,12 @@ function useForm<T>(initialState: T, editData?: T) {
     return { state, errors, handleChange, handleSubmit };
 }
 
-export default useForm
+// הגדרת המשתנה initialState
+const initialState = {
+    title: '',
+    content: '',
+    category: ''
+};
+
+// קריאה ל-hook עם פונקציית ולידציה מותאמת אישית
+export default useForm;

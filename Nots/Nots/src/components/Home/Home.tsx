@@ -1,11 +1,16 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { RootState } from '../../store';
 
 const Home: React.FC = () => {
   const notes = [
     { id: 1, title: 'הערה 1', content: 'תוכן ההערה 1' },
     { id: 2, title: 'הערה 2', content: 'תוכן ההערה 2' },
   ];
+
+  const auth = useSelector((state: RootState) => state.auth);
+  auth
 
   return (
     <div>

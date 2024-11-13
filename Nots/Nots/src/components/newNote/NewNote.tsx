@@ -4,11 +4,25 @@ import { useNavigate } from "react-router-dom";
 
 const NewNote: React.FC = () => {
   const navigate = useNavigate();
-  const { state, handleChange, handleSubmit } = useForm({
-    title: '',
-    content: '',
-    category: 'personal',
-  });
+
+  // פונקציית הולידציה מותאמת אישית
+  const validate = (values: { title: string; content: string; category: string }) => {
+    const errors: { [key: string]: string } = {};
+    if (!values.title) errors.title = 'כותרת נדרשת';
+    if (!values.content) errors.content = 'תוכן נדרש';
+    if (!values.category) errors.category = 'קטגוריה נדרשת';
+    return errors;
+  };
+
+  // קריאה ל-useForm עם initialState ו-validate
+  const { state, errors, handleChange, handleSubmit } = useForm(
+    {
+      title: '',
+      content: '',
+      category: 'personal',
+    },
+    validate
+  );
 
   return (
     <div>
@@ -22,6 +36,7 @@ const NewNote: React.FC = () => {
             value={state.title}
             onChange={handleChange}
           />
+          {errors.title && <span>{errors.title}</span>}
         </div>
         <div>
           <label htmlFor="content">Content:</label>
@@ -30,6 +45,7 @@ const NewNote: React.FC = () => {
             value={state.content}
             onChange={handleChange}
           />
+          {errors.content && <span>{errors.content}</span>}
         </div>
         <div>
           <label htmlFor="category">Category:</label>
@@ -42,9 +58,12 @@ const NewNote: React.FC = () => {
             <option value="work">Work</option>
             <option value="shopping">Shopping</option>
           </select>
+          {errors.category && <span>{errors.category}</span>}
         </div>
         <button type="submit">Save</button>
       </form>
     </div>
   );
 };
+
+export default NewNote;
