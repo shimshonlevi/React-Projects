@@ -4,8 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const userController_1 = require("../controllers/userController");
+const attackController_1 = require("../controllers/attackController");
+const authMiddleware_1 = require("../middleWare/authMiddleware");
 const router = express_1.default.Router();
-router.route("/register").post(userController_1.handleRegister);
-router.route("/login").post(userController_1.handleLogin);
+router.use(authMiddleware_1.authWithBearer);
+router.route("/:id/launched/:missileId").put(attackController_1.handleLaunch);
+router.route("/:id/exploaded").put(attackController_1.handleExploation);
 exports.default = router;

@@ -12,36 +12,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerUser = void 0;
+exports.handleLogin = exports.handleRegister = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const express_async_handler_1 = __importDefault(require("express-async-handler"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const userModel_1 = __importDefault(require("../models/userModel"));
+const userService_1 = require("../services/userService");
 dotenv_1.default.config();
-exports.registerUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, password, isAdmin } = req.body;
-    if (!username || !password || !isAdmin) {
-        res.status(400);
-        throw new Error("Username and password are required");
+const handleRegister = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { username, password, organization } = req.body;
+        if (!req.body.area) {
+            const newTerrorist = yield (0, userService_1.terroristRegister)({ username, password, organization });
+            res.status(201).json({ success: true, message: "terrorist registered successfully", newTerrorist });
+        }
+        else {
+            const location = req.body.area;
+            const newSoldier = yield (0, userService_1.idfRegister)({ username, password, organization, location });
+            res.status(201).json({ success: true, message: "soldier registered successfully", newSoldier });
+        }
     }
-    const userExists = yield userModel_1.default.findOne({ username });
-    if (userExists) {
-        res.status(400);
-        throw new Error("User already exists");
+    catch (error) {
+        next(error);
     }
-    const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-    const user = yield userModel_1.default.create({
-        username,
-        password: hashedPassword,
-        isAdmin,
-        hasVoted: false,
-        votedFor: null
-    });
-    if (user) {
-        res.status(201).json(user);
+});
+exports.handleRegister = handleRegister;
+const handleLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { username, password } = req.body;
+        const warrior = (0, userService_1.UserLogin)(username, password);
+        const token = jsonwebtoken_1.default.sign({ warriorId: warrior._id, username: warrior.username }, process.env.JWT_SECRET || "your-super-secret-key", { expiresIn: '24h' });
+        res.json({ token: token, warrior: warrior });
     }
-    else {
-        res.status(400);
-        throw new Error("Invalid user data");
+    catch (error) {
+        next(error);
     }
-}));
+});
+exports.handleLogin = handleLogin;

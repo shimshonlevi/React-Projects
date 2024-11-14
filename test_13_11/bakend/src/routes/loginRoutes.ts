@@ -1,9 +1,10 @@
-import express from "express"
-import {login} from '../controllers/loginController'
+import express, { Router } from "express";
+import { handleRegister , handleLogin } from "../controllers/userController";
 
-const router = express.Router()
+const router: Router = express.Router();
 
+router.route("/register").post(handleRegister);
 
-router.post("/login", login)
+router.route("/login").post(handleLogin);
 
-export default router
+export default router;

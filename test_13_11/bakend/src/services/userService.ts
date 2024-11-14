@@ -1,27 +1,28 @@
 import missileModel, { Missile } from "../models/missileModel";
 import organizationModel from "../models/orgonizationModel";
-import warriorModel, { Warrior } from "../models/userModel";
+import UserModel, { User } from "../models/userModel";
 import { IMissileResource, IResource } from "../types/types";
 import bcrypt from "bcrypt";
 
 
-export const terroristRegister = async (data: {username: string, password: string, organization: string}): Promise<Warrior> => {
+export const terroristRegister = async (data: {username: string, password: string, organization: string}): Promise<User> => {
     try {
         const myOrganization = await organizationModel.findOne({name: data.organization});
+
         if(!myOrganization)
-            throw new Error("organization you are trying to join not found");
+            throw new Error("organization not found");
 
         let mySources: IMissileResource[] = [];
-        myOrganization.resources.forEach(async (r: IResource) => {
+        for (const r of myOrganization.resources) {
             const myMissile: Missile | null = await missileModel.findOne({name: r.name});
-            if(!myMissile)
-                throw new Error("missile in organization's resource not found");
-            mySources.push({missile: myMissile, amount: r.amount});
-        });
+            if (!myMissile)
+                throw new Error("missile in resource not found");
+            mySources.push({ missile: myMissile, amount: r.amount });
+        }
 
         const hashedPassword = await bcrypt.hash(data.password, 10);
 
-        const newTerrorist = await warriorModel.create({
+        const newTerrorist = await UserModel.create({
             username: data.username, 
             password: hashedPassword, 
             organization: data.organization,
@@ -31,11 +32,11 @@ export const terroristRegister = async (data: {username: string, password: strin
         return newTerrorist;
     } 
     catch (error: any) {
-        throw new Error("error occured while trying to register a terrorist" + error.message);
+        throw new Error("error by insert terrorist: " + error.message);
     }
 }
 
-export const soldierRegister = async (data: {username: string, password: string, organization: string, location: string}): Promise<Warrior> => {
+export const idfRegister = async (data: {username: string, password: string, organization: string, location: string}): Promise<User> => {
     try {
         const idfLocation = `${data.organization} - ${data.location}`;
         const myOrganization = await organizationModel.findOne({name: idfLocation});
@@ -52,7 +53,7 @@ export const soldierRegister = async (data: {username: string, password: string,
 
         const hashedPassword = await bcrypt.hash(data.password, 10);
 
-        const newSoldier = await warriorModel.create({
+        const newSoldier = await UserModel.create({
             username: data.username, 
             password: hashedPassword, 
             organization: data.organization,
@@ -67,17 +68,17 @@ export const soldierRegister = async (data: {username: string, password: string,
     }
 }
 
-export const warriorLogin = async (username: string, password: string): Promise<Warrior> => {
+export const UserLogin = async (username: string, password: string): Promise<User> => {
     try {
-        const warrior = await warriorModel.findOne({username});
-        if(!warrior)
-            throw new Error("warrior not found!");
+        const User = await UserModel.findOne({username});
+        if(!User)
+            throw new Error("User not found!");
 
-        const comparedPassword = await bcrypt.compare(password, warrior.password);
+        const comparedPassword = await bcrypt.compare(password, User.password);
         if(!comparedPassword)
             throw new Error("Invalid Password");
 
-        return warrior;
+        return User;
     } 
     catch (error: any) {
         throw new Error("error occured while trying to logging in" + error.message);

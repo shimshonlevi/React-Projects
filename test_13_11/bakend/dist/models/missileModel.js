@@ -24,34 +24,23 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const UserSchema = new mongoose_1.Schema({
-    username: {
+const missileSchema = new mongoose_1.Schema({
+    name: {
         type: String,
-        required: [true, "you must have a username"],
-        maxlength: [30, "length of username can't be more than 30 letters"],
-        minlength: [2, "length of username must be more than 2 letters"]
     },
-    password: {
+    description: {
         type: String,
-        required: [true, "you must have a password"],
-        minlength: [4, "length of paasword must be more than 4 charachters"],
     },
-    organization: {
-        type: String,
-        required: [true, "you must be related to some organization"],
+    speed: {
+        type: Number,
     },
-    location: {
-        type: String || null,
-        default: null,
-    },
-    resources: {
-        type: [Object],
+    intercepts: {
+        type: [String],
         default: []
     },
-    launchHistory: {
-        type: [{ rocket: { type: String }, status: { type: String } }],
-        default: [],
-    },
+    price: {
+        type: Number
+    }
 });
-const UserModel = mongoose_1.default.model("User", UserSchema);
-exports.default = UserModel;
+const missileModel = mongoose_1.default.model("Missile", missileSchema);
+exports.default = missileModel;

@@ -12,7 +12,7 @@ export interface IUser {
     launched: [ILaunched];
 }
 
-export interface Warrior extends Document {
+export interface User extends Document {
     _id: Types.ObjectId;
     username: string;
     password: string;
@@ -22,7 +22,7 @@ export interface Warrior extends Document {
     launchHistory: ILaunched[]; 
 }
 
-const warriorSchema = new Schema<Warrior>({
+const UserSchema = new Schema<User>({
     username: {
         type: String,
         required: [true, "you must have a username"],
@@ -52,6 +52,6 @@ const warriorSchema = new Schema<Warrior>({
     },
 });
 
-const warriorModel = mongoose.model("Warrior", warriorSchema);
+const UserModel = mongoose.model("User", UserSchema);
 
-export default warriorModel;
+export default UserModel;

@@ -1,5 +1,4 @@
 "use strict";
-// config/connectDB.js
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -14,18 +13,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
-// קריאת מחרוזת החיבור ממשתני הסביבה
-const connectionString = process.env.CONNECTION_STRING || "mongodb://localhost:27017/defaultDB";
+const organizations_json_1 = __importDefault(require("../data/organizations.json"));
+const missiles_json_1 = __importDefault(require("../data/missiles.json"));
+const orgonizationModel_1 = __importDefault(require("../models/orgonizationModel"));
+const missileModel_1 = __importDefault(require("../models/missileModel"));
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const connect = yield mongoose_1.default.connect(connectionString);
-        console.log(`Connected to DB Database, host: ${connect.connection.host}, Database name: ${connect.connection.name}`);
+        const connected = yield mongoose_1.default.connect(process.env.MONGO_URI);
+        if ((yield orgonizationModel_1.default.find()).length == 0)
+            yield seedWarData();
+        console.log("mongoDB connected: ", connected.connection.host);
     }
-    catch (err) {
-        console.error("Database connection error:", err);
-        process.exit(1); // יציאה מהתהליך במקרה של שגיאה
+    catch (error) {
+        console.error(error.message);
     }
+});
+const seedWarData = () => __awaiter(void 0, void 0, void 0, function* () {
+    yield orgonizationModel_1.default.insertMany(organizations_json_1.default);
+    yield missileModel_1.default.insertMany(missiles_json_1.default);
 });
 exports.default = connectDB;

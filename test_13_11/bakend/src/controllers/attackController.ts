@@ -1,12 +1,42 @@
-import dotenv from "dotenv";
-import asyncHandler from "express-async-handler";
-import { Request, Response } from "express";
-import  Missile,{Imissile} from "../models/missileModel";
-import  missileList  from "../data/missiles.json";
-import orgonization from "../models/orgonizationModel";
+import express, { Request, Response, NextFunction } from "express";
+import { exploadedRocket, launchRocket } from "../services/attackService";
 
+export const handleLaunch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const warriorId = req.params.id;
+        const missileId = req.params.missileId;
+        if(!warriorId || !missileId){
+            res.status(400).json({message: "you have to send the id of warrior and the missileId in the params"});
+            return;
+        }
 
-export const attack = asyncHandler(async (req: Request, res: Response) => {
-    await Missile.deleteMany({});
+        const updatedWarrior = await launchRocket(warriorId, missileId);
+        res.status(200).json({success: true, message: "missile amount successfully substracted", updatedWarrior});
+    } 
+    catch (error: any) {
+        next(error);
+    }
+}
 
-    const missilesArray = await Missile.insertMany(missileList);
+export const handleExploation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const warriorId = req.params.id;
+        if(!warriorId){
+            res.status(400).json({message: "you have to send the id of warrior and the missileId in the params"});
+            return;
+        }
+        
+        const status = req.body.status;
+        const attacker = req.body.attacker;
+        if(!status || !attacker){
+            res.status(400).json({message: "you have to send the status of the rocket in the body"});
+            return;
+        }
+
+        const updatedWarrior = await exploadedRocket(warriorId, status, attacker, req.body.missileId);
+        res.status(200).json({success: true, message: "succeeded to update the launchHistory of the warrior", updatedWarrior});
+    } 
+    catch (error: any) {
+        next(error);
+    }
+}

@@ -1,21 +1,26 @@
-// config/connectDB.js
-
 import mongoose from "mongoose";
-import dotenv from "dotenv"
-
-dotenv.config()
-
-
-const connectionString = process.env.CONNECTION_STRING || "mongodb://localhost:27017/defaultDB";
+import organizationsData from '../data/organizations.json';
+import missilesData from '../data/missiles.json';
+import organizationModel from "../models/orgonizationModel";
+import missileModel from "../models/missileModel";
 
 const connectDB = async () => {
     try {
-        const connect = await mongoose.connect(connectionString);
-        console.log(`Connected to DB Database, host: ${connect.connection.host}, Database name: ${connect.connection.name}`);
-    } catch (err) {
-        console.error("Database connection error:", err);
-        process.exit(1); 
+        const connected = await mongoose.connect(process.env.MONGO_URI as string);
+
+        if((await organizationModel.find()).length == 0)
+            await seedWarData();
+
+        console.log("mongoDB connected: ", connected.connection.host);
+    } 
+    catch (error: any) {
+        console.error(error.message);
     }
-};
+}
+
+const seedWarData = async () => {
+    await organizationModel.insertMany(organizationsData);
+    await missileModel.insertMany(missilesData);
+}
 
 export default connectDB;

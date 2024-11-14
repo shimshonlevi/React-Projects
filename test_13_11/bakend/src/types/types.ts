@@ -25,6 +25,6 @@ export interface IMissileResource {
 }
 
 export interface ILaunched {
-    rocket: string;
+    rocket: any;
     status: "Hit" | "Intercepted";
 }
