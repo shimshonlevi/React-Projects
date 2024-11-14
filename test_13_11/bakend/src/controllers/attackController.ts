@@ -6,7 +6,7 @@ export const handleLaunch = async (req: Request, res: Response, next: NextFuncti
         const warriorId = req.params.id;
         const missileId = req.params.missileId;
         if(!warriorId || !missileId){
-            res.status(400).json({message: "you have to send the id of warrior and the missileId in the params"});
+            res.status(400).json({message: "you have to send in the params"});
             return;
         }
 
@@ -22,7 +22,7 @@ export const handleExploation = async (req: Request, res: Response, next: NextFu
     try {
         const warriorId = req.params.id;
         if(!warriorId){
-            res.status(400).json({message: "you have to send the id of warrior and the missileId in the params"});
+            res.status(400).json({message: "you have to send the id and the missileId in the params"});
             return;
         }
         

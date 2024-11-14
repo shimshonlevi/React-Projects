@@ -14,50 +14,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.exploadedRocket = exports.launchRocket = void 0;
 const userModel_1 = __importDefault(require("../models/userModel"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const launchRocket = (id, missileId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const User = yield userModel_1.default.findById(id);
-        if (!User)
-            throw new Error(`User with id ${id} not founded`);
-        const missileIndex = User.resources.findIndex((m) => m.missile.id == missileId);
+        // המרת ה-id ל-ObjectId
+        const objectId = new mongoose_1.default.Types.ObjectId(id);
+        const user = yield userModel_1.default.findById(objectId);
+        if (!user)
+            throw new Error(`User with id ${id} not found`);
+        // const missileIndex = user.resources.findIndex((m: IMissileResource) => m.missile.id === missileId);
+        const missileIndex = user.resources.findIndex((m) => m.missile._id.toString() === missileId);
+        console.log("missileIndex", missileIndex);
         if (missileIndex < 0)
-            throw new Error("the missile with id " + missileId + " wasn't found in the resources");
-        User.resources[missileIndex].amount -= 1;
-        yield User.save();
-        return User;
+            throw new Error(`Missile with id ${missileId} not found in resources`);
+        user.resources[missileIndex].amount -= 1;
+        yield user.save();
+        return user;
     }
     catch (error) {
-        throw new Error("error occured while trying to launch a rocket due to error: " + error.message);
+        throw new Error(`Error occurred while trying to launch a rocket due to: ${error.message}`);
     }
 });
 exports.launchRocket = launchRocket;
-const exploadedRocket = (id, missileId, status, attacker) => __awaiter(void 0, void 0, void 0, function* () {
+const exploadedRocket = (id, status, attackerId, missileId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const warrior = yield userModel_1.default.findById(id);
         if (!warrior)
-            throw new Error(`warrior with id ${id} not founded`);
-        warrior.launchHistory.push({ rocket: attacker, status: status });
+            throw new Error(`Warrior with id ${id} not found`);
+        // המרת המתקיף ל-ObjectId
+        const attackerObjectId = new mongoose_1.default.Types.ObjectId(attackerId);
+        // הוספת פרטי השיגור להיסטוריית השיגור של הלוחם
+        warrior.launchHistory.push({ rocket: attackerObjectId, status });
         yield warrior.save();
         return warrior;
     }
     catch (error) {
-        throw new Error("an error occured while trying to handle exploation of rocket due to error: " + error.message);
+        throw new Error("An error occurred while trying to handle explosion of rocket due to: " + error.message);
     }
 });
 exports.exploadedRocket = exploadedRocket;
-//     try {
-//         const User = await userModel.findById(id);
-//         if(!User)
-//             throw new Error(`User with id ${id} not founded`);
-//         const missileIndex = User.resources.findIndex((m: IMissileResource) => m.missile.id == missileId)
-//         if(missileIndex < 0)
-//             throw new Error("the missile with id "+missileId+" wasn't found in the resources");
-//         const rocketName = User.resources[missileIndex].missile.name;
-//         User.launchHistory.push({rocket: rocketName, status: status});
-//         await User.save();
-//         return User;
-//     } 
-//     catch (error: any) {
-//         throw new Error("an error occured while trying to handle exploation of rocket due to error: " + error.message);
-//     }
-// }

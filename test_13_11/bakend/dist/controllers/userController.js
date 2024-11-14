@@ -38,7 +38,7 @@ exports.handleRegister = handleRegister;
 const handleLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, password } = req.body;
-        const warrior = (0, userService_1.UserLogin)(username, password);
+        const warrior = yield (0, userService_1.UserLogin)(username, password);
         const token = jsonwebtoken_1.default.sign({ warriorId: warrior._id, username: warrior.username }, process.env.JWT_SECRET || "your-super-secret-key", { expiresIn: '24h' });
         res.json({ token: token, warrior: warrior });
     }

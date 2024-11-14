@@ -17,7 +17,7 @@ export const handleRegister = async (req: Request, res: Response, next: NextFunc
             
             const location = req.body.area;
             const newSoldier = await idfRegister({username, password, organization, location});
-            res.status(201).json({success: true, message: "soldier registered successfully", newSoldier});
+            res.status(201).json({success: true, message: "idf user registered successfully", newSoldier});
         }
     } 
     catch (error) {
@@ -32,7 +32,7 @@ export const handleLogin = async (req: Request, res: Response, next: NextFunctio
   
       const token = jwt.sign(
         { warriorId: warrior._id, username: warrior.username },
-        process.env.JWT_SECRET || "your-super-secret-key",
+        process.env.JWT_SECRET || "secret",
         { expiresIn: '24h' }
       );
   
